@@ -1,0 +1,20 @@
+    <template>
+        <lightning-card>
+            <h3 slot="title">
+                <lightning-icon icon-name="utility:settings" size="small"></lightning-icon>
+                Notifications
+            </h3>
+            <div slot="footer" class="slds-modal__footer" style="padding: 0.50rem 1rem;">
+                    <lightning-button icon-name="utility:save" variant="brand" label="Send Envelope"
+                        title="Send Envelope" onclick={nextStep}></lightning-button>
+                
+            </div>
+              <div class="slds-p-around_medium lgc-bg">
+                        <lightning-input type="text" label="Email Subject" value={dfsle__EmailSubject__c} onchange={handleSubjectChange}></lightning-input>
+                   
+                        <lightning-input type="text" label="Email Message"  value={dfsle__EmailMessage__c} onchange={handleMessageChange}></lightning-input>
+                    </div>      
+                         
+        </lightning-card>
+    </template>
+    

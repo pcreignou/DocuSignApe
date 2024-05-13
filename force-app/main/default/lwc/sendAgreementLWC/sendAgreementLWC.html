@@ -1,0 +1,175 @@
+<template>
+    <div class="slds-tabs_card">
+        <lightning-tabset class="flexipage-tabset">
+            <lightning-tab label="Recipients" class="slds-tabs_default__item slds-is-active">
+                <div class="slds-card" style="font-family: 'Open Sans', sans-serif">
+                    <!-- Header -->
+                    <header class="slds-card__header slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:contact" size="small"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body slds-card__header-title slds-text-title_bold"
+                            style="font-size: 14px">
+                            Add Recipients
+                        </div>
+                    </header>
+                    <!-- Table -->
+                    <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer" role="grid">
+                        <thead>
+                            <tr>
+                                <th scope="col" height="22" style="width: 3rem">Nr.</th>
+                                <th scope="col" height="22">Name</th>
+                                <th scope="col" height="22">Email</th>
+                                <th scope="col" height="22">Type</th>
+                                <th scope="col" height="22">Role</th>
+                                <th scope="col" height="22">Order</th>
+                                <th scope="col" height="22" style="width: 3rem"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={listOfRecipients} for:item="rec">
+                                <tr key={rec} class="slds-hint-parent">
+                                    <td style="font-weight: bold">
+                                        <lightning-formatted-number value={rec.index}></lightning-formatted-number>.
+                                    </td>
+                                    <td>
+                                        <lightning-input required type="text" variant="label-hidden" label=""
+                                            data-id={rec.index} name="Name" value={rec.Name}
+                                            onchange={handleInputChange}>
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-input required type="Email" variant="label-hidden" label=""
+                                            data-id={rec.index} name="dfsle__Email__c" value={rec.dfsle__Email__c}
+                                            onchange={handleInputChange}>
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-combobox required variant="label-hidden" label="" data-id={rec.index}
+                                            name="dfsle__Type__c" value={rec.dfsle__Type__c} options={recipientTypes}
+                                            onchange={handleInputChange}></lightning-combobox>
+                                    </td>
+                                    <td>
+                                        <lightning-input required type="text" variant="label-hidden" label=""
+                                            data-id={rec.index} name="dfsle__Role__c" value={rec.dfsle__Role__c}
+                                            onchange={handleInputChange}>
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-input required type="text" variant="label-hidden" label=""
+                                            data-id={rec.index} name="dfsle__RoutingOrder__c"
+                                            value={rec.dfsle__RoutingOrder__c} onchange={handleInputChange}>
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-button-icon icon-name="utility:delete" alternative-text="Remove"
+                                            title="Remove" name={rec.index} onclick={removeRow}></lightning-button-icon>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                    <div class="slds-p-left_small slds-p-vertical_small">
+                        <lightning-button class="slds-p-right_small" variant="destructive" label="delete all rows"
+                            title="delete all rows" icon-name="utility:recycle_bin_full" onclick={removeAllRows}>
+                        </lightning-button>
+                        <lightning-button variant="neutral" label="add additional row" title="add additional row"
+                            icon-name="utility:add" onclick={addNewRow}></lightning-button>
+                    </div>
+                    <!-- Footer -->
+                    <footer class="slds-modal__footer" style="padding: 0.50rem 1rem;">
+                        <lightning-button icon-name="utility:save" variant="brand" label="Generate Envelope"
+                            title="Generate Envelope" onclick={handleClick}></lightning-button>
+                    </footer>
+                </div>
+            </lightning-tab>
+            <lightning-tab label="Options" class="slds-tabs_default__item" title="Siganture Options">
+                <div class="slds-card" style="font-family: 'Open Sans', sans-serif">
+                    <!-- Header -->
+                    <header class="slds-card__header slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="utility:settings" size="small"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body slds-card__header-title slds-text-title_bold"
+                            style="font-size: 14px">
+                            Notification Options
+                        </div>
+                    </header>
+                    <div class="slds-m-top_medium slds-m-bottom_x-large">
+
+                        <div class="slds-p-around_medium lgc-bg">
+                            <lightning-input type="text" label="Email Subject" value={dfsle__EmailSubject__c}
+                                onchange={handleSubjectChange}></lightning-input>
+                        </div>
+                        <div class="slds-p-around_medium lgc-bg">
+                            <lightning-input type="text" label="Email Message" value={dfsle__EmailMessage__c}
+                                onchange={handleMessageChange}></lightning-input>
+                        </div>
+
+
+                    </div>
+                    <!-- Footer -->
+                    <footer class="slds-modal__footer" style="padding: 0.50rem 1rem;">
+                        <lightning-button icon-name="utility:save" variant="brand" label="Send Envelope"
+                            title="Send Envelope" onclick={handleClick}></lightning-button>
+                    </footer>
+                </div>
+            </lightning-tab>
+            <lightning-tab label="Agreement" class="slds-tabs_default__item" onactive={handleFilesTab}>
+
+                <div class="slds-card" style="font-family: 'Open Sans', sans-serif">
+                    <!-- Header -->
+                    <header class="slds-card__header slds-media slds-media_center">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:account" size="small"></lightning-icon>
+                        </div>
+                        <div class="slds-media__body slds-card__header-title slds-text-title_bold"
+                            style="font-size: 14px">
+                            Preview Agreement
+                        </div>
+                    </header>
+                    <!-- Table -->
+                    <table class="slds-table slds-table_bordered slds-no-row-hover slds-table_cell-buffer" role="grid">
+                        <thead>
+                            <tr>
+                                <th scope="col" height="22">Agreement Name</th>
+                                <th scope="col" height="22" style="width: 3rem">Preview</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={relatedFiles} for:item="file">
+                                <tr key={file} class="slds-hint-parent">
+                                    <td>
+                                        <lightning-formatted-text required type="text" variant="label-hidden" label=""
+                                            data-id={file.ContentDocumentId} name="Name"
+                                            value={file.ContentDocument.Title}>
+                                        </lightning-formatted-text>
+                                    </td>
+                                    <td>
+                                        <lightning-button-icon icon-name="utility:preview" alternative-text="Preview"
+                                            data-id={file.ContentDocumentId} title="Preview"
+                                            name={file.ContentDocumentId} onclick={handleAgreementView}>
+                                        </lightning-button-icon>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                    <!-- Footer -->
+                    <footer class="slds-modal__footer" style="padding: 0.50rem 1rem;">
+                        <template if:true={isPreviewed}>
+                            <lightning-button icon-name="utility:preview" variant="brand" label="Preview Envelope"
+                                title="Preview Envelope" onclick={handlePreview}></lightning-button>
+
+                            <lightning-button icon-name="utility:save" variant="brand" label="Send Envelope"
+                                title="Send Envelope" onclick={handleSend}></lightning-button>
+                            <lightning-button icon-name="utility:cancel" variant="brand" label="Cancel Draft Envelope"
+                                title="Cancel Envelope" onclick={handleCancel}></lightning-button>
+                        </template>
+                    </footer>
+                </div>
+
+            </lightning-tab>
+        </lightning-tabset>
+    </div>
+</template>

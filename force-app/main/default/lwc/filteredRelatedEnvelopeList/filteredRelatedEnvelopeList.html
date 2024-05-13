@@ -1,0 +1,273 @@
+<template>
+    <article class="slds-card slds-card slds-p-top_none">
+        <div class="slds-card__header slds-grid">
+        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+        <div class="slds-media__figure">
+        <span class="slds-icon_container slds-icon-standard-account" title="account">
+            <img src="/resource/1691487762000/dfsle__sendingIcon" class="slds-icon slds-icon_small"/>
+        <span class="slds-assistive-text">DocuSign Envelopes Status</span>
+        </span>
+        </div>
+        <div class="slds-media__body">
+        <h2 class="slds-card__header-title">
+        <a href="#" class="slds-card__header-link slds-truncate" title="DocuSign Envelope Status">
+        <span>DocuSign Contract Status</span>
+        </a>
+        </h2>
+        </div>        
+        </header>
+        </div>
+        <div class="slds-card__body">
+            <template lwc:if={envelopes}>
+            <template for:each={envelopes} for:item="envelope" for:index="index">   
+                    
+                <div key={envelope.Id} class="slds-card__body slds-card__body_inner">
+                            <ul class="slds-grid slds-wrap slds-grid_pull-padded">
+                              <li class="slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_1-of-1">
+                                <article class="slds-tile slds-media slds-card__tile slds-hint-parent">
+                                  <div class="slds-media__figure">
+                                    <span class="slds-icon_container slds-icon-standard-contact" title="Description of icon when needed">
+                                        <lightning-icon lwc:if={envelope.isSent} icon-name="custom:custom105" class="slds-icon-custom-custom105 slds-timeline__icon ds-timeline__pending slds-icon_container" >
+                                            <span style="--sds-c-icon-color-background: var(--slds-c-icon-color-background, rgb(242, 139, 0))" part="boundary">
+                                                <lightning-primitive-icon size="medium" variant="inverse">
+                                                    <svg class="slds-icon" focusable="false" data-key="custom105" aria-hidden="true" viewBox="0 0 1000 1000" part="icon">
+                                                        
+                                                    </svg>
+                                                </lightning-primitive-icon>
+                                            </span>
+                                        </lightning-icon>                                                              
+                                        <lightning-icon lwc:if={envelope.isCompleted} icon-name="standard:task2" class="slds-icon-standard-task2 slds-timeline__icon ds-timeline__positive slds-icon_container" >
+                                            <span style="--sds-c-icon-color-background: var(--slds-c-icon-color-background, rgb(59, 167, 85))" part="boundary">
+                                                <lightning-primitive-icon size="medium" variant="inverse">
+                                                    <svg class="slds-icon" focusable="false" data-key="task2" aria-hidden="true" viewBox="0 0 1000 1000" part="icon">				
+                                                    </svg>
+                                                </lightning-primitive-icon>
+                                            </span>
+                                        </lightning-icon>                                     
+                                        <lightning-icon lwc:if={envelope.isVoided} icon-name="standard:first_non_empty" style="--slds-c-icon-color-background: red;" class="slds-icon-standard-first_non_empty slds-timeline__icon ds-timeline__negative slds-icon_container --slds-c-icon-color-background">
+                                            <span class="slds-icon_container slds-icon-utility-first_non_empty" title="Description of icon when needed">
+                                                <svg class="slds-icon slds-icon-text-error" aria-hidden="true">
+                                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#first_non_empty"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Description of icon when needed</span>
+                                              </span>  
+                                        </lightning-icon>
+                                        <lightning-icon lwc:if={envelope.isDeclined} icon-name="standard:first_non_empty" style="--slds-c-icon-color-background: red;" class="slds-icon-standard-first_non_empty slds-timeline__icon ds-timeline__negative slds-icon_container --slds-c-icon-color-background">
+                                            <span class="slds-icon_container slds-icon-utility-first_non_empty" title="Description of icon when needed">
+                                                <svg class="slds-icon slds-icon-text-error" aria-hidden="true">
+                                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#first_non_empty"></use>
+                                                </svg>
+                                                <span class="slds-assistive-text">Description of icon when needed</span>
+                                              </span>  
+                                        </lightning-icon>
+                                        <span class="slds-assistive-text">Envelope</span>
+                                    </span>
+                                  </div>
+                                  <div class="slds-media__body">
+                                    <div class="slds-grid slds-timeline__trigger slds-gutters_xx-small">
+                                        <div class="slds-col slds-grow-none ds-envelope-title"> 
+                                            <h3 class="slds-tile__title slds-truncate" title="Related Record Title 1">
+                                            <strong>{envelope.dfsle__Status__c} </strong> 
+                                          </h3>   
+
+                                        </div>
+                                        <div class="slds-col" ></div>
+                                        <div class="slds-timeline__actions slds-timeline__actions_inline"><lightning-formatted-date-time value= {envelope.dfsle__LastStatusUpdate__c} year="2-digit" month="short" day="2-digit" ></lightning-formatted-date-time>                            
+                                        </div>                                       
+                                      </div>
+                                              
+                                      <p class="slds-m-horizontal_xx-small">
+                                          <lightning-formatted-email   value={envelope.dfsle__SenderEmail__c} label={envelope.dfsle__SenderName__c}></lightning-formatted-email><lightning-formatted-text value=" sent this Contract"></lightning-formatted-text>
+                                       </p>
+                                       <p class="slds-m-horizontal_xx-small">
+                                        <lightning-formatted-email lwc:if={envelope.isDeclined}  value={envelope.declinedByEmail} label={envelope.declinedByName}></lightning-formatted-email><lightning-formatted-text  lwc:if={envelope.isDeclined} value=" declined to sign this Contract"></lightning-formatted-text>
+                                     </p>
+                                    <lightning-accordion allow-multiple-sections-open active-section-name="">
+                                        <lightning-accordion-section name={envelope.Id} label="More details"  onsectiontoggle={handleSectionToggle}>
+                                          <lightning-button-menu
+                                          slot="actions"
+                                          alternative-text="Show menu"
+                                          menu-alignment="right"
+                                          class="slds-dropdown-trigger slds-dropdown-trigger_click"
+                                          icon-size="x-small"
+                                          onselect={handleActionsMenuSelect}
+                                      >
+                                          <lightning-menu-item
+                                              value={envelope.dfsle__DocuSignId__c}
+                                              label="Display Envelope Record"
+                                          ></lightning-menu-item>
+                                         <!-- <lightning-menu-item
+                                              value="Edit"
+                                              label="Menu Item Two"
+                                          ></lightning-menu-item> -->
+                                      </lightning-button-menu>  
+                                            <article class="slds-box slds-timeline__item_details slds-theme_shade slds-m-top_x-small slds-m-horizontal_xx-small slds-p-around_medium" id="task-item-expanded-69">
+                                                                                            
+                                                <ul class="slds-list_horizontal slds-wrap">
+                                                  <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                    <span class="slds-text-title slds-p-bottom_x-small">Sent</span>
+                                                    <span class="slds-text-body_medium slds-truncate" title="Sent">
+                                                        <lightning-formatted-date-time value= {envelope.CreatedDate} year="2-digit" month="short" day="2-digit" weekday="long"></lightning-formatted-date-time>                            
+                                       
+                                                    </span>
+                                                  </li>
+                                                  <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                    <span class="slds-text-title slds-p-bottom_x-small">Status</span>
+                                                    <span class="slds-text-body_medium slds-truncate" title="Status">
+                                                      {envelope.dfsle__Status__c}
+                                                    </span>
+                                                  </li>
+                                                </ul>
+                                                <ul class="slds-list_horizontal slds-wrap">
+                                                    <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                      <span class="slds-text-title slds-p-bottom_x-small">Expires</span>                                                      
+                                                        <template lwc:if={envelope.isVoided}>
+                                                            <span  class="slds-text-body_medium slds-truncate" title="Expiration Date">
+                                                                <lightning-formatted-date-time value= {envelope.dfsle__Expires__c} year="2-digit" month="short" day="2-digit" weekday="long"></lightning-formatted-date-time>
+                                                             </span>
+                                                        </template>
+                                                        <template lwc:elseif={envelope.isCompleted}>
+                                                            <span  class="slds-text-body_medium slds-truncate" title="Expiration Date">
+                                                                <lightning-formatted-date-time value= {envelope.dfsle__Expires__c} year="2-digit" month="short" day="2-digit" weekday="long"></lightning-formatted-date-time>
+                                                             </span>
+                                                        </template>
+                                                        <template lwc:else>
+                                                            <span  class="slds-text-body_medium slds-truncate" title="Expiration Date">
+                                                              <lightning-formatted-date-time value= {envelope.expires} year="2-digit" month="short" day="2-digit" weekday="long"></lightning-formatted-date-time>
+                                                             
+                                                             </span>
+                                                        </template>                                                   
+                                                      
+                                                    </li>
+                                                    <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                      <span class="slds-text-title slds-p-bottom_x-small">Last Update</span>
+                                                      <span class="slds-text-body_medium slds-truncate" title="LastUpdate">
+                                                        <a href="#">{envelope.lastUpdated}</a>
+                                                      </span>
+                                                    </li>
+                                                  </ul>
+                                                  <ul lwc:if={envelope.isDeclined} class="slds-list_horizontal slds-wrap">
+                                                    <li class="slds-grid slds-grid_vertical slds-size_1-of-1 slds-p-bottom_small">
+                                                    <span class="slds-text-title slds-p-bottom_x-small">Voided Reason</span>
+                                                    <span class="slds-text-body_medium" title="voided">
+                                                      <lightning-formatted-email lwc:if={envelope.isDeclined}  value={envelope.declinedByEmail} label={envelope.declinedByName}></lightning-formatted-email><lightning-formatted-text  lwc:if={envelope.isDeclined} value=" declined this Contract"></lightning-formatted-text>
+                               
+                                                    </span>   
+                                                    </li>
+                                                  </ul>   
+                                             
+                                                  <ul lwc:if={envelope.isVoided} class="slds-list_horizontal slds-wrap">
+                                                    <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                    <span class="slds-text-title slds-p-bottom_x-small">Voided Reason</span>
+                                                    <span class="slds-text-body_medium " title="voided">
+                                                        {envelope.dfsle__Reason__c}
+                                                    </span>   
+                                                    </li>
+                                                  </ul>   
+                                                  <ul class="slds-list_horizontal slds-wrap">
+                                                    <li class="slds-grid slds-grid_vertical slds-size_1-of-1 slds-p-bottom_small">
+                                                    <span class="slds-text-title slds-p-bottom_x-small">Subject</span>
+                                                    <span class="slds-text-body_medium slds-truncate" title="SentBy">
+                                                        {envelope.dfsle__EmailSubject__c}
+                                                    </span>   
+                                                    </li>                                                
+                                                  </ul>
+                                                
+                                              </article> 
+                                              <div>                                              
+                                                <p class="slds-p-top_x-small">                                                    
+                                                    <lightning-accordion class="lds-accordion__summary-completed" allow-multiple-sections-open
+                                                        active-section-name="">
+                                                        <lightning-accordion-section 
+                                                            name={envelope.dfsle__DocuSignId__c}
+                                                            label="Show Recipient Details"
+                                                            onsectiontoggle={handleSectionToggle}>
+                                                            <template for:each={envelope.dfsle__Recipients__r}
+                                                                for:item="recipient" for:index="index">
+                                                                 <lightning-accordion key={recipient.Id} 
+                                                                    allow-multiple-sections-open active-section-name="">
+                                                                    <lightning-icon lwc:if={recipient.isSent} icon-name="utility:date_time" class="warning-icon" alternative-text="Current!" 
+                                                                    title="warning variant small" size="small"></lightning-icon>
+                                                                    <lightning-icon lwc:if={recipient.isCompleted} icon-name="utility:success" alternative-text="Signed!" variant="success"
+                                                                    title="success variant small" size="small"></lightning-icon><lightning-icon lwc:if={recipient.isDeclined} icon-name="utility:close" alternative-text="Declined!" variant="error"
+                                                                    title="success variant small" size="small"></lightning-icon> <lightning-icon lwc:if={recipient.isCreated} icon-name="utility:record_create" alternative-text="Created!" variant="warning"
+                                                                    title="success variant small" size="small"></lightning-icon><lightning-formatted-email value={recipient.dfsle__Email__c} label={recipient.Name} hide-icon></lightning-formatted-email>
+                                                                
+                                                                    <lightning-accordion-section name={recipient.Id}
+                                                                        label="More..."
+                                                                        class= {recipient.dfsle__Status__c}
+                                                                        onsectiontoggle={handleSectionToggle}>
+                                                                        <article class="slds-box slds-timeline__item_details slds-theme_shade slds-m-top_x-small slds-m-horizontal_xx-small slds-p-around_medium" id="task-recipient-expanded-69">
+                                                                                            
+                                                                            <ul class="slds-list_horizontal slds-wrap">
+                                                                              <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                                                <span class="slds-text-title slds-p-bottom_x-small">Received</span>
+                                                                                <span class="slds-text-body_medium slds-truncate" title="Sent">
+                                                                                    <lightning-formatted-date-time value= {recipient.dfsle__Sent__c} year="2-digit" month="short" day="2-digit" weekday="long"></lightning-formatted-date-time>                            
+                                                                   
+                                                                                </span>
+                                                                              </li>
+                                                                              <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                                                <span class="slds-text-title slds-p-bottom_x-small">Status</span>
+                                                                                <span class="slds-text-body_medium slds-truncate" title="Status">
+                                                                                  {recipient.dfsle__Status__c}
+                                                                                </span>
+                                                                              </li>
+                                                                            </ul>
+                                                                            <ul class="slds-list_horizontal slds-wrap">
+                                                                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                                                  <span class="slds-text-title slds-p-bottom_x-small">Recipient Type</span>                                                     
+                                                                                   
+                                                                                        <span  class="slds-text-body_medium slds-truncate" title="Recipient Type">
+                                                                                             {recipient.dfsle__Type__c} 
+                                                                                         </span>
+                                                                                                                       
+                                                                                  
+                                                                                </li>
+                                                                                <li class="slds-grid slds-grid_vertical slds-size_1-of-2 slds-p-bottom_small">
+                                                                                  <span class="slds-text-title slds-p-bottom_x-small">Last Update</span>
+                                                                                  <span class="slds-text-body_medium slds-truncate" title="LastUpdate">
+                                                                                    <lightning-formatted-date-time value= {recipient.dfsle__LastStatusUpdate__c} year="2-digit" month="short" day="2-digit" weekday="long"></lightning-formatted-date-time>                            
+                                                                                  </span>
+                                                                                </li>
+                                                                              </ul>
+                                                                              <ul class="slds-list_horizontal slds-wrap">
+                                                                                <li class="slds-grid slds-grid_vertical slds-size_1-of-1 slds-p-bottom_small">
+                                                                                <span class="slds-text-title slds-p-bottom_x-small">Reason</span>
+                                                                                <span class="slds-text-body_medium slds-truncate" title="SentBy">
+                                                                                    {envelope.dfsle__Reason__c}
+                                                                                </span>   
+                                                                                </li>                                                
+                                                                              </ul>
+                                                                            
+                                                                          </article> 
+                                                                        
+                                                                    </lightning-accordion-section>
+                                                                </lightning-accordion>
+                                                            </template>
+                                                        </lightning-accordion-section>
+                                                    </lightning-accordion>
+                                                </p>
+                                              </div>                                       
+                                           
+                                        </lightning-accordion-section>                              
+                                  
+                                    </lightning-accordion>                              
+                                  </div>
+                                </article>
+                              </li>                           
+                            </ul>
+                          </div>         
+            </template>                     
+            </template>
+            <template lwc:else>
+                <p>No envelope status records to display.</p>
+            </template>
+        </div>
+        <footer class="slds-card__footer">
+        <a class="slds-card__footer-action" href="#">View All
+        <span class="slds-assistive-text">envelope Statuses</span>
+        </a>
+        </footer>
+        </article> 
+</template>

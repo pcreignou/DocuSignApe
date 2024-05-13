@@ -1,0 +1,7 @@
+<aura:component implements="lightning:isUrlAddressable" description="Send For signature" >
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="listOfRecipients" type="Object" />
+    <aura:attribute name="dfsle__EmailMessage__c" type="String" />
+    <aura:attribute name="dfsle__EmailSubject__c" type="String" />
+    <c:sendForSignature recordId="{!v.recordId}" listOfRecipients="{!v.listOfRecipients}" dfsle__EmailSubject__c="{!v.dfsle__EmailSubject__c}" dfsle__EmailMessage__c="{!v.dfsle__EmailMessage__c}"  ></c:sendForSignature>
+</aura:component>	
