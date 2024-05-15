@@ -72,12 +72,14 @@ export default class FilteredRelatedEnvelopeList extends NavigationMixin(Lightni
        
       }
 
+
     @wire(getEnvelopeStatusRecords,{
         sourceId: '$recordId'
     })    
     wiredEnvelopes({data, error}){
         if (data) {
            
+      var salesforceEnvelope ="tbd";
             this.envelopes =  structuredClone(data);      
             this.envelopes.forEach(element => {
                 console.log(element.dfsle__Status__c)
@@ -107,7 +109,11 @@ export default class FilteredRelatedEnvelopeList extends NavigationMixin(Lightni
                     }else  if(recipient.dfsle__Status__c == 'Sent' || recipient.dfsle__Status__c == 'sent'){
                         console.log("Recipient Sent true");
                         recipient.isSent = true;
-                    }else if(recipient.dfsle__Status__c == "Declined" || recipient.dfsle__Status__c == "declined"){
+                    }else  if(recipient.dfsle__Status__c == 'Delivered' || recipient.dfsle__Status__c == 'delivered'){
+                        console.log("Recipient Delivered true");
+                        recipient.isDelivered = true;
+                    }
+                    else if(recipient.dfsle__Status__c == "Declined" || recipient.dfsle__Status__c == "declined"){
                         console.log("Recipient Declined")
                         recipient.isDeclined = true;
                         element.isDeclined = true;
@@ -125,6 +131,29 @@ export default class FilteredRelatedEnvelopeList extends NavigationMixin(Lightni
                     element.lastUpdated =this.convertTime(currentDate , lastUpdatedDate,"past");
                     element.completed = this.convertTime(currentDate , completedDate,"past");
                 });  
+                getEnvelopeRecord({
+                    envelopeId: element.dfsle__DocuSignId__c
+                })
+                .then(result => {
+                    //logic to handle result...
+                    salesforceEnvelope = JSON.stringify( result);  
+                    salesforceEnvelope = salesforceEnvelope.replaceAll("\\", "");  
+                    console.log(salesforceEnvelope);
+                    salesforceEnvelope = JSON.parse( salesforceEnvelope);  
+
+                    Object.keys(salesforceEnvelope).forEach(function(key) {
+                        console.log('Key : ' + key + ', Value : ' + data[key])
+                      })
+
+                    salesforceEnvelope.dfsle__CustomFields__c.forEach(customField=> {
+                        console.log(customField);
+                     
+                    })                            
+                })
+                .catch(error => {
+                    //logic to handle errors
+                    console.log(JSON.stringify(error))
+                });
             });         
             console.log('Status records...'+JSON.stringify(this.envelopes));          
             this.updateList();
@@ -134,6 +163,7 @@ export default class FilteredRelatedEnvelopeList extends NavigationMixin(Lightni
             console.error('Damn Error occurred: '+ JSON.stringify(error));
         }
     }
+    /*handle r to filer envelope per status to be implmented in template */
     handleSelection(event) {
         this.status = event.detail.value;
         this.updateList();
@@ -158,7 +188,7 @@ export default class FilteredRelatedEnvelopeList extends NavigationMixin(Lightni
         })
         .then(result => {
             //logic to handle result...
-            this.sfEnvelopeRecord = result;
+            this.sfEnvelopeRecord = result.Id;
             console.log(JSON.stringify(result));
             this.navigateToEnvelope();
         })

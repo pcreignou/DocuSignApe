@@ -64,12 +64,19 @@ public class DocuSignEnvelopeController{
 
 
         dfsle.Document.WriteBack documentWriteBack = new dfsle.Document.WriteBack(null, dfsle.Document.WRITE_BACK_NAME_ENVELOPE_STATUS_PDF, false, true);
+        dfsle.CustomField sender = new dfsle.CustomField('text', '##SFSender', UserInfo.getUserEmail(), null, false, true);
+        System.debug(LoggingLevel.INFO, '## SF USER  : ' + UserInfo.getUserEmail());
         Map<String, Map<String, Object>> envelopeEvents = new Map<String, Map<String, Object>>{ dfsle.Envelope.STATUS_COMPLETED => new Map<String, Object>{ 'StageName' => 'Closed Won' } };
 
         // Create  envelope
         try{
             dfsle.Envelope dsEnvelope = dfsle.EnvelopeService.getEmptyEnvelope(new dfsle.Entity(mySourceId)) // The initiating Salesforce record
-            .withEmail(emailMessage, emailSubject).withDocuments(myDocuments).withRecipients(recipients).withNotifications(notifySigner).withOptions(new dfsle.Envelope.Options(true, documentWriteBack, envelopeEvents, new Map<String, Map<String, Object>>()));
+            .withEmail(emailMessage, emailSubject)
+            .withDocuments(myDocuments)
+            .withRecipients(recipients)
+            .withNotifications(notifySigner)
+            .withCustomFields(new List<dfsle.CustomField>{ sender })
+            .withOptions(new dfsle.Envelope.Options(true, documentWriteBack, envelopeEvents, new Map<String, Map<String, Object>>()));
 
 
             // Send the envelope.
